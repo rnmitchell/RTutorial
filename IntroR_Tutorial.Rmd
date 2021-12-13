@@ -145,16 +145,30 @@ new_df = subset(mtcars, cyl==6)
 new_df
 ```
 
-The `new_df` data frame now only contains rows in which the `cyl` column contains `6`.  
+The `new_df` data frame now only contains rows in which the `cyl` column contains `6`.
 
 Subsetting allows for `>`, `<`, and `==`, as well as `<=` and `>=`.
 
-It can also be used to filter out rows containing a specific column value:
+What do these symbols mean?? Some may are obvious (`>` and `<` mean `greater than` and `less than`).
+
+But why is `equals to` operator a double equals sign (`==`)?? 
+
+Remember that what the `=` operator means in R? It sets the name of the dataset, variable, vector, function, etc.! Therefore, the `==` is the operator to mean `equal to`.
+
+
+The `>=` and `<=` means `greater than or equal to` and `less than or equal to`.
+
+
+These operators can also be used to *remove* rows containing a specific column value using the `!=`:
 
 ```{r subset_remove, exercise=TRUE}
 new_df = subset(mtcars, cyl!=6)
 new_df
 ```
+This means the `mtcars` dataframe is subsetted for all values of the `cyl` column that do NOT equal 6!
+
+___
+
 
 It also allows for subsetting on multiple column values using the `&` symbol:
 
@@ -166,7 +180,7 @@ and_df
 Lastly, subsetting can use an "or" symbol (`|`), to filter on one column's values _or_ another column's values:
 
 ```{r or, exercise=TRUE}
-or_df = subset(mtcars, cyl ==6 | mpg>15)
+or_df = subset(mtcars, cyl == 6 | mpg>15)
 or_df
 ```
 
@@ -272,7 +286,7 @@ __Calculate the correlation for two specified columns, `mpg` and `wt`.__
 cor(mtcars$mpg, mtcars$wt)
 ```
 
-```{r quiz}
+```{r stats_quiz}
 quiz(
   question("Which column had the strongest correlation with mpg (positive or negative)?",
     answer("cyl"),
@@ -333,6 +347,8 @@ The Tidyverse world uses the `%>%` operator often to help make code more linear 
 ```{r tidy_col, exercise=TRUE}
 mtcars = mtcars %>%
   mutate(pounds = wt * 1000)
+
+head(mtcars)
 ```
 
 This code created a new column (`pounds`) which multipled the `wt` column by 1000.
@@ -352,6 +368,8 @@ Take a look at the column you created above by using the `head()` and `table()` 
 
 
 ```{r iris_newcol-hint}
+head(iris)
+
 table(iris$Species, iris$Species_level)
 ```
 ### Exercise: Renaming columns
@@ -373,6 +391,8 @@ __Run the below code to select specific columns:__
 ```{r select, exercise=TRUE}
 iris_subset = iris %>%
   select(Sepal.Length, Sepal.Width, Species)
+
+head(iris_subset)
 ```
 
 You can also remove a column using the `-` sign. Try writing the code below to remove the `Petal.Width` column from the `iris` data frame and assign to a new variable:
@@ -393,6 +413,8 @@ __Run the below code to subset the `iris` dataset:__
 ```{r filter, exercise=TRUE, exercise.eval=TRUE}
 iris_subset = iris %>%
   filter(Sepal.Length>4.5)
+
+head(iris_subset)
 ```
 
 Using the `&` sign, add code above to filter by `Sepal.Length` > 4.5 _and_ only the rows are the Species `setosa`. 
@@ -400,8 +422,9 @@ Using the `&` sign, add code above to filter by `Sepal.Length` > 4.5 _and_ only 
 iris_subset = iris %>%
   filter(Sepal.Length>4.5 & Species=='setosa')
 ```
+___
 
-Finally, in the code chunk below, filter the `iris` data frame to rows with `Sepal.Length` less than 4 _or_ `Petal.Length` is greater than 3.
+Finally, in the code chunk below, filter the `iris` data frame to rows with `Sepal.Length` less than 4 _or_ `Petal.Length` is greater than 3. (HINT: the command for `or` is `|`)
 
 ```{r filter_or, exercise=TRUE, exercise.eval=TRUE}
 
@@ -421,6 +444,8 @@ __Run the code below to sort the `iris` data frame by `Sepal.Length`:__
 ```{r sort, exercise=TRUE}
 iris_sort = iris %>%
   arrange(Sepal.Length)
+
+head(iris_sort)
 ```
 
 __How would you change the above code to sort first by `Sepal.Length` and then by `Petal.Length`? Add to the code chunk below.__
@@ -428,6 +453,8 @@ __How would you change the above code to sort first by `Sepal.Length` and then b
 ```{r sort_2, exercise=TRUE, exercise.eval=TRUE}
 iris_sort = iris %>%
   arrange(Sepal.Length)
+
+head(iris_sort)
 ```
 
 ```{r sort_2-hint}
@@ -445,6 +472,8 @@ Using what you learned above with `filter()` and `arrange()`, in the code block 
 iris_filt_sort = iris %>%
   filter(Sepal.Length > 5) %>%
   arrange(Sepal.Width)
+
+head(iris_filt_sort)
 ```
 
 ### Exercise: Grouping
@@ -488,6 +517,8 @@ Further, the function `separate()` can be used separate a column's values by a s
 ```{r separate, exercise=TRUE}
 iris_sep = iris_unite %>%
   separate(newcol, sep="_", into=c("Species_new", "Sepal_Length_new"))
+
+head(iris_sep)
 ```
 
 Tidyverse has a _ton_ of useful functions for tidying and wrangling data. Don't forget to google whatever you are trying to do! It's likely that tidyverse will have an answer for you! :)
@@ -562,6 +593,16 @@ ggplot(mtcars)+
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
+```{r ggplot_quiz}
+quiz(
+  question("In the above code, the ggtitle() command contains `\\n`. What does this symbol do?",
+    answer("Nothing! It's a typo."),
+    answer("It makes the text bold."),
+    answer("It makes the text italic."),
+    answer("It acts as a line break, moving the text following it to the next line.", correct=TRUE)
+  ))
+```
+
 ### Exercise
 
 Legends! A very important and necessary evil of plotting. ggplot allows for a lot of customization with regards to legends. We learned above about changing the colors and how that's reflected within the legend. Here we learn more options to make our plots LEGENDARY.
@@ -582,6 +623,8 @@ ggplot(mtcars)+
   theme(legend.text = element_text(size = 8, color = "red"))
   #theme(legend.position="bottom")
 ```
+
+
 
 ### Exercise
 
