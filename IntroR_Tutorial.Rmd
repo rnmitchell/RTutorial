@@ -1,0 +1,713 @@
+---
+title: "Tutorial"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(tidyr)
+library(dplyr)
+library(magrittr)
+library(ggplot2)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Topic 1: Introduction to R
+
+__Some helpful directions:__
+
+1. Use the `Run Code` button on the right side of the code chunk to run.
+
+2. Using the `Start Over` will remove any code added to the original code within the code chunk as well as any generated output.
+
+3. Need help with writing code? Select the `Hint` button for the answer!
+
+### Exercise: Loading and Exploring the `mtcars` dataset
+
+The first step to coding in R is to load your dataset. In this tutorial, we are going to use one of the built-in R datasets, `mtcars`.
+
+__Run the below code to load the `mtcars` dataset.__
+
+```{r load, exercise=TRUE}
+data("mtcars")
+```
+
+While this does not produce any output, it loads the selected dataset into the R environment.
+
+_________
+
+Now let's explore that dataset!
+
+__Run the below code to have a look!__
+
+```{r head, exercise=TRUE}
+head(mtcars)
+```
+
+There are several different data structures in R. The `mtcars` dataset shown above is a `data frame`, which is very similar to a table.
+
+As you can see, the `head()` command displays the first several rows of the data frame.  
+
+__Want to see the bottom rows? Go ahead and give `tail()` a try!__
+
+```{r tail, exercise=TRUE, exercise.eval=TRUE}
+
+```
+
+```{r tail-hint}
+tail(mtcars)
+```
+
+_____
+
+__Next, calculate the number of rows (using `nrow()`) and the number of columns (using `ncol()`)__
+```{r nrow_ncol, exercise=TRUE, exercise.eval=TRUE}
+
+```
+
+```{r nrow_ncol-hint}
+nrow(mtcars)
+ncol(mtcars)
+```
+
+If you successfully ran the code, you'll see the data frame contains 32 rows and 11 columns.
+
+Further, an even _easier_ command `dim()` can be used to generate the dimensions (rows columns) of the data frame.
+
+```{r dim, exercise=TRUE}
+dim(mtcars)
+```
+
+### Exercise: Column Names and Vectors
+
+Column names are very important and used often in coding in R. 
+
+One may want to list the column names and can be done by using the below code:
+
+```{r col_names, exercise=TRUE}
+names(mtcars)
+```
+
+Using the `names()` function results in a new R data structure: a vector. Let's assign this vector to a new __variable__ called `mtcars_names` using the below code:
+
+```{r assign_names, exercise=TRUE, exercise.eval=TRUE}
+mtcars_names = names(mtcars)
+```
+
+```{r assign_names-hint}
+mtcars_names = names(mtcars)
+mtcars_names
+```
+
+It should be noted that there are two different syntax for assigning a new variable name. These can be found in the code chunk below. As you can see, they can be used interchangeably.  
+- Older versions of R utilized the `<-` syntax.  
+- Newer code also allows for the use of `=`.  
+Both work; it is simply user preference!
+
+```{r var_assign, exercise=TRUE}
+assign_one = 2+2
+assign_one
+assign_two <- 4*2
+assign_two
+```
+
+Some additional R syntax:
+
+(1) Running the above code chunk, you can see that no output is produced when assigning a variable. In order to view that particular variable, only the variable name must be invoked. Add the variable name to the above code chunk and re-run the code.
+
+(2) As you can see when the `mtcars_names` is invoked, the element numbers are also displayed. Specific element(s) can be accessed by using the `[]` containing the index number(s). Run the below code to see some examples of this:
+
+```{r indices, exercise=TRUE}
+mtcars_names=names(mtcars)
+mtcars_names
+mtcars_names[1]
+mtcars_names[1:5]
+```
+
+Now that we've identified the column names, there's one last important R syntax for you to learn, `$`. This allows for calling a specific column from a data frame by using the column name. For example: `mtcars$mpg` or `mtcars$wt`.  
+
+While invoking this directly on the command line is not very useful (run the code below), this is very important syntax that will be used often in R coding.
+
+```{r colnames, exercise=TRUE}
+mtcars$mpg
+```
+
+### Exercise: Subsetting Data Frames
+
+Above, you learned how to subset a vector by using `mtcars_names[1:5]`. Subsetting a data frame is another very useful tool for creating a new data frame based on values of one or more columns.
+
+__Run the below code to learn how to subset the `mtcars` data frame.__
+
+```{r subset, exercise=TRUE}
+new_df = subset(mtcars, cyl==6)
+new_df
+```
+
+The `new_df` data frame now only contains rows in which the `cyl` column contains `6`.  
+
+Subsetting allows for `>`, `<`, and `==`, as well as `<=` and `>=`.
+
+It can also be used to filter out rows containing a specific column value:
+
+```{r subset_remove, exercise=TRUE}
+new_df = subset(mtcars, cyl!=6)
+new_df
+```
+
+It also allows for subsetting on multiple column values using the `&` symbol:
+
+```{r subset_and, exercise=TRUE}
+and_df = subset(mtcars, cyl==6 & mpg>15)
+and_df
+```
+
+Lastly, subsetting can use an "or" symbol (`|`), to filter on one column's values _or_ another column's values:
+
+```{r or, exercise=TRUE}
+or_df = subset(mtcars, cyl ==6 | mpg>15)
+or_df
+```
+
+Compare the `and_df` and the `or_df` created above.
+
+```{r subset_quiz}
+quiz(
+  question("How many rows in the `and_df` data frame?",
+    answer("32"),
+    answer("7", correct = TRUE),
+    answer("26"),
+    answer("16")
+  ),
+  question("How many rows in the `or_df` data frame?",
+    answer("32"),
+    answer("7"),
+    answer("26", correct = TRUE),
+    answer("16")
+  )
+)
+```
+
+## Topic 2: Introduction to R Statistics
+
+_As we move on, we will begin to write more R code ourselves. Don't forget about the `Hint` button if you get stuck!_
+
+### Exercise: Summary Stats
+
+Interested in generating some summary statistics on the dataset? The `summary()` command will calculate several different summary statistics for the specified dataset.
+
+__Write the code for calculating summary stats on the `mtcars` data frame.__
+
+```{r summary_all, exercise=TRUE, exercise.eval=TRUE}
+
+```
+
+```{r summary_all-hint}
+summary(mtcars)
+```
+
+The `summary()` command is very useful for a quick look at your data. It will also give you the number of rows with `NA` values within that particular column.
+
+
+________
+
+Remember the `$` syntax to call a specific column by name?
+
+__Write the code below to generate summary stats using the `summary()` command on the `mpg` column of the `mtcars` data frame.__
+
+```{r summary, exercise=TRUE, exercise.eval=TRUE}
+
+```
+
+```{r summary-hint}
+summary(mtcars$mpg)
+```
+
+
+You can also generate individual stats, such as `mean()`, `min()` and `max()`, etc.
+
+__Calculate the mean and median for the `mtcars$mpg` column and compare these values to those calculated above.__
+
+```{r mean_med, exercise=TRUE, exercise.eval=TRUE}
+
+```
+
+```{r mean_med-hint}
+mean(mtcars$mpg)
+median(mtcars$mpg)
+```
+
+Finally, another useful statistic to generate is a correlation coefficient (R) using the `cor()` function. The `cor()` function can be used in two different ways:  
+(1) by running correlations on _all_ columns against each other, or  
+(2) by selecting two specific columns to calculate the correlation coefficient for. 
+
+__Using the `cor()` function, generate a correlation matrix for all columns below.__
+
+```{r corr_all, exercise=TRUE, exercise.eval=TRUE}
+
+```
+
+```{r corr_all-hint}
+cor(mtcars)
+```
+
+__Calculate the correlation between the `mpg` column and all other columns using the `cor()` function and answer the below question.__
+
+```{r cor, exercise=TRUE, exercise.eval=TRUE}
+
+```
+
+```{r cor-hint}
+cor(mtcars$mpg, mtcars)
+```
+
+__Calculate the correlation for two specified columns, `mpg` and `wt`.__
+
+```{r cor_single, exercise=TRUE, exercise.eval=TRUE}
+
+```
+
+```{r cor_single-hint}
+cor(mtcars$mpg, mtcars$wt)
+```
+
+```{r quiz}
+quiz(
+  question("Which column had the strongest correlation with mpg (positive or negative)?",
+    answer("cyl"),
+    answer("disp"),
+    answer("hp"),
+    answer("drat"),
+    answer("wt", correct = TRUE),
+    answer("qsec"),
+    answer("vs"),
+    answer("am"),
+    answer("gear"),
+    answer("carb")
+  ),
+  question("Which column had the weakest correlation with mpg (positive or negative)?",
+    answer("cyl"),
+    answer("disp"),
+    answer("hp"),
+    answer("drat"),
+    answer("wt"),
+    answer("qsec", correct = TRUE),
+    answer("vs"),
+    answer("am"),
+    answer("gear"),
+    answer("carb")
+  )
+)
+```
+
+### Exercise: Table command
+
+For this exercise, we will use the built-in `iris` dataset. First, please load this dataset into the R environment and take a look at the data frame.
+
+```{r iris, exercise=TRUE, exercise.eval=TRUE}
+
+```
+
+```{r iris-hint}
+data("iris")
+head(iris)
+```
+
+This `iris` dataset differs from the `mtcars` dataset in that it contains a column with non-numeric values (`Species`).
+
+The `table()` function is very useful to summarize the information contained in these types of columns:
+
+```{r table, exercise=TRUE}
+table(iris$Species)
+```
+
+## Topic 3: Introduction to Tidyverse
+
+Tidyverse is a collection of extremely important and useful R packages for data wrangling and manipulation. We'll explore two of these packages, `tidyr` and `dplyr` here, but Tidyverse has a lot of very cool and useful other packages as well!
+
+### Exercise: Creating a New Column
+
+The Tidyverse world uses the `%>%` operator often to help make code more linear and readable. It allows for running multiple functions at once on a single data frame by stringing multiple `%>%` operators together.
+
+```{r tidy_col, exercise=TRUE}
+mtcars = mtcars %>%
+  mutate(pounds = wt * 1000)
+```
+
+This code created a new column (`pounds`) which multipled the `wt` column by 1000.
+
+This is useful when applying the same function to every row value... but what if you want to create a new column with values dependent on the value from another column?
+
+__Here, we'll be using the iris data set:__
+
+```{r iris_newcol, exercise=TRUE}
+iris = iris %>%
+  mutate(Species_level = case_when(Species=="setosa" ~ 1,
+                                   Species=="versicolor" ~ 2,
+                                   Species=="virginica" ~ 3))
+```
+
+Take a look at the column you created above by using the `head()` and `table()` functions in the code chunk above. Check out the `Hint` button below for a way to compare two columns against each other using the `table()` function!
+
+
+```{r iris_newcol-hint}
+table(iris$Species, iris$Species_level)
+```
+### Exercise: Renaming columns
+
+Renaming columns of a data frame is a very common task. Tidyverse makes it very easy to do:
+
+```{r rename, exercise=TRUE}
+iris = iris %>%
+  rename(petal_length = Petal.Length, sepal_length = Sepal.Length)
+
+head(iris)
+```
+
+
+### Exercise: Subsetting Data Frames
+
+__Run the below code to select specific columns:__
+
+```{r select, exercise=TRUE}
+iris_subset = iris %>%
+  select(Sepal.Length, Sepal.Width, Species)
+```
+
+You can also remove a column using the `-` sign. Try writing the code below to remove the `Petal.Width` column from the `iris` data frame and assign to a new variable:
+
+```{r remove, exercise=TRUE, exercise.eval=TRUE}
+
+```
+
+```{r remove-hint}
+iris_subset = iris %>%
+  select(-Petal.Width)
+```
+
+Very similar to the `subset()` command in base R, the `filter()` command subsets a data frame based on specific conditions.
+
+__Run the below code to subset the `iris` dataset:__
+
+```{r filter, exercise=TRUE, exercise.eval=TRUE}
+iris_subset = iris %>%
+  filter(Sepal.Length>4.5)
+```
+
+Using the `&` sign, add code above to filter by `Sepal.Length` > 4.5 _and_ only the rows are the Species `setosa`. 
+```{r filter-hint}
+iris_subset = iris %>%
+  filter(Sepal.Length>4.5 & Species=='setosa')
+```
+
+Finally, in the code chunk below, filter the `iris` data frame to rows with `Sepal.Length` less than 4 _or_ `Petal.Length` is greater than 3.
+
+```{r filter_or, exercise=TRUE, exercise.eval=TRUE}
+
+```
+
+```{r filter_or-hint}
+iris_subset = iris %>%
+  filter(Sepal.Length < 4 | Petal.Length > 3)
+```
+
+### Exercise: Sorting
+
+The `arrange()` function allows for sorting a data frame based on values in a specific column.
+
+__Run the code below to sort the `iris` data frame by `Sepal.Length`:__
+
+```{r sort, exercise=TRUE}
+iris_sort = iris %>%
+  arrange(Sepal.Length)
+```
+
+__How would you change the above code to sort first by `Sepal.Length` and then by `Petal.Length`? Add to the code chunk below.__
+
+```{r sort_2, exercise=TRUE, exercise.eval=TRUE}
+iris_sort = iris %>%
+  arrange(Sepal.Length)
+```
+
+```{r sort_2-hint}
+iris_sort = iris %>%
+  arrange(Sepal.Length, Petal.Length)
+```
+
+Using what you learned above with `filter()` and `arrange()`, in the code block below, please write the code for filtering the `iris` data frame to include only rows with `Sepal.Length` greater than 5 and then sorted by the `Sepal.Width` column (remember to use multiple `%>%` operators!)
+
+```{r string, exercise=TRUE, exercise.eval=TRUE}
+
+```
+
+```{r string-hint}
+iris_filt_sort = iris %>%
+  filter(Sepal.Length > 5) %>%
+  arrange(Sepal.Width)
+```
+
+### Exercise: Grouping
+
+Getting a little bit more advanced, there may be times you want to perform specific functions on a group of rows as defined by a specific column value. For example, using the `iris` data frame, if you wanted to know the mean Sepal Length for each flower species, you could run the following:
+
+```{r groupby, exercise=TRUE}
+sp_mean = iris %>%
+  group_by(Species) %>%
+  summarize(Mean.Sepal.Length=mean(Sepal.Length))
+
+sp_mean
+```
+
+The `summarize()` function is running the `mean()` function on each value of the `Species` column and creating a new data frame with the results.
+
+### Exercise: Merging/Separating Columns
+
+Changing directions a bit, there may be times when you want to merge or separate columns based on a delimiter (`_`, `,`, spaces, etc.). Tidyverse is great to do this using `unite()` and `separate()`. 
+
+__Run the below code to see what the `unite()` function does:__
+
+```{r unite, exercise=TRUE, exercise.eval=TRUE}
+iris_unite = iris %>%
+  unite("newcol", Species, Sepal.Length, sep = "_")
+
+head(iris_unite)
+```
+
+
+As you can see, the new column `newcol` is created, but the columns united for this new column were dropped. There is an option to keep the original columns by adding `remove = FALSE` to the unite function after the `sep = ` option. Go ahead and do that to see the results!
+
+```{r unite-hint}
+iris_unite = iris %>%
+  unite("newcol", Species, Sepal.Length, sep = "_", remove = FALSE)
+
+```
+
+Further, the function `separate()` can be used separate a column's values by a specified delimiter into two (or more!) new columns.
+
+```{r separate, exercise=TRUE}
+iris_sep = iris_unite %>%
+  separate(newcol, sep="_", into=c("Species_new", "Sepal_Length_new"))
+```
+
+Tidyverse has a _ton_ of useful functions for tidying and wrangling data. Don't forget to google whatever you are trying to do! It's likely that tidyverse will have an answer for you! :)
+
+
+
+
+## Topic 5: Introduction to ggplot
+
+### Exercise 
+
+Here's an exercise to get familiar with ggplot using a built-in dataset (mtcars).
+
+__Run the below code to generate a basic scatterplot of vehicle weight on the x-axis and mpg on the y-axis using ggplot__:
+
+```{r scatterplot, exercise=TRUE}
+ggplot(mtcars,aes(x=wt,y=mpg))+ 
+  geom_point()
+```
+
+This code displays the basic template for ggplot. 
+
+The first line contains the dataset, aes() containing the columns from the dataset for the x and y values.
+
+The `+` sign indicates additional code to be read for ggplot options.
+
+### Exercise
+
+Alternative template for ggplot (more useful with advanced plotting, such as plotting more than one variable or column onto a single plot).
+
+__Run the code below. What is different between this code and the code above?__
+
+```{r scatterplot_alt, exercise=TRUE}
+ggplot(mtcars)+ 
+  geom_point(aes(x=wt,y=mpg))
+```
+
+### Exercise
+
+The aes() code refers to the "aesthetics" of the plot and can be customized with a few different options. 
+
+__Run the below code to generate the same plot using a different aes() option:__
+
+```{r scatterplot_with_aes, exercise=TRUE}
+ggplot(mtcars)+ 
+  geom_point(aes(x=wt,y=mpg, col=factor(cyl), shape=factor(vs)))
+```
+
+The color option allows the user to color by another variable as well as change the shape of the dot based on a third variable.
+
+### Exercise
+
+Beyond, the aes() code, ggplot allows for a lot of customization. From different titles to colors to labels, your plot is almost fully customizable.
+
+__Run the below code to check out some of the options using ggplot.__  
+__Try removing or hashing out (using the `#` symbol in front of the line of code) various lines (not the first two lines!) and re-run the code to see how the plot changes.__  
+__Try changing the colors and/or sizes! Or the order of the colors. How does this affect the plot/legend?__  
+__In addition, please add a customized y-axis label.__  
+__Hint: don't forget about the `+` at the end of the line! (Except for the last line!)__
+
+```{r scatterplot_with_other_options, exercise=TRUE}
+ggplot(mtcars)+ 
+  geom_point(aes(x=wt,y=mpg, col=factor(cyl), shape=factor(vs)))+
+  xlab("Weight")+
+  ggtitle("Experimenting with ggplot! \nLong titles allowed!")+
+  scale_color_manual(values=c("purple", "orange", "brown"))+
+  scale_x_continuous(labels=c(1:6), breaks=c(1:6), limits=c(1,6))+
+  theme(plot.title = element_text(color="red", size=14, face="bold.italic"))+
+  theme(axis.title.x = element_text(color="blue", size=14, face="bold"))+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+### Exercise
+
+Legends! A very important and necessary evil of plotting. ggplot allows for a lot of customization with regards to legends. We learned above about changing the colors and how that's reflected within the legend. Here we learn more options to make our plots LEGENDARY.
+
+__Run the below code. As above, try hashing out (`#`) lines to experiment with their effects!__  
+__Try removing the hash on the last line (don't forget about the `+` on the line above!) to see what this does!__
+
+```{r scatterplot_with_legend, exercise=TRUE}
+ggplot(mtcars)+ 
+  geom_point(aes(x=wt,y=mpg, col=factor(cyl), shape=factor(vs)))+
+  xlab("Weight")+
+  ggtitle("Experimenting with ggplot! \nLong titles allowed!")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
+  labs(col="cyl", shape="vs")+
+  theme(legend.key = element_rect(fill = "white", color = "black"))+
+  theme(legend.title = element_text(face = "bold"))+
+  theme(legend.text = element_text(size = 8, color = "red"))
+  #theme(legend.position="bottom")
+```
+
+### Exercise
+
+The last feature I want to introduce is a smoothing line for scatterplots. This is a good way to better visualize overall data trends.
+
+__Run the below code containing two different smoothing methods.__  
+__Loess smoothing is the default (first line)__  
+__The linear model (`lm`) method produces a straight line (second line)__
+__Don't forget to hash out (`#`) one of the `geom_smooth` methods in order to visualize the other separately!__  
+__What do you think the `se=FALSE` means?__
+
+```{r smoothing_lines, exercise=TRUE}
+ggplot(mtcars,aes(x=wt,y=mpg))+ 
+  geom_point()+
+  geom_smooth()+
+  geom_smooth(method="lm", col="darkgreen", se=FALSE)
+```
+
+
+## Topic 6: Additional ggplot plot types
+
+### Exercise
+
+#### ggplot has many different types of plots. We'll go through a few of them here.
+
+__Histogram plots__  
+__First, run the below code.__  
+__Then try changing the colors of the histogram by using `fill="blue"` and `col="white"`__  
+__Finally, try adding a title to the plot.__
+
+
+```{r histogram, exercise=TRUE, exercise.eval=TRUE}
+ggplot(mtcars)+
+  geom_histogram(aes(x=mpg), binwidth=5)
+```
+
+```{r histogram-hint}
+ggplot(mtcars)+
+  geom_histogram(aes(x=mpg), binwidth=5, fill="blue", col="white")+
+  ggtitle("Anything you want!")
+```
+### Exercise
+
+__Bar plots__   
+__First, try running the below code.__  
+__Bar plots also allow to plot by a third variable. Add `fill=factor(vs)` to the `aes()` function to color by vs. Also do not forget to remove `fill="darkgreen"` from that line of code as well!__  
+__Finally, try removing the `position="dodge"` line to see what happens!__
+
+
+```{r barplot, exercise=TRUE}
+ggplot(mtcars)+
+  geom_bar(aes(x=factor(cyl), y=mpg), stat="identity", position="dodge", fill="darkgreen")+
+  xlab("Num of Cylinders")+
+  ylab("Miles Per Gallon")
+```
+
+```{r barplot-hint}
+ggplot(mtcars)+
+  geom_bar(aes(x=factor(cyl), y=mpg, fill=factor(vs)), stat="identity", position="dodge")+
+  xlab("Num of Cylinders")+
+  ylab("Miles Per Gallon")+
+  labs(fill="vs")
+```
+
+
+### Exercise
+
+__Box plots__ 
+
+```{r box, exercise=TRUE, exercise.eval=TRUE}
+ggplot(mtcars)+
+  geom_boxplot(aes(x=cyl,y=mpg))
+```
+
+Well that plot looks weird, huh? This is treating the `cyl` column as a continuous variable, creating this funky looking plot.  
+Try changing the `x=cyl` to `x=factor(cyl)` and rerun!
+
+
+```{r box-hint}
+ggplot(mtcars)+
+  geom_boxplot(aes(x=factor(cyl),y=mpg))
+```
+
+There are many different customizations for box plots as well! Below are a few:  
+Try hashing out (`#`) a few of the lines in order to learn what each line of code does!
+
+```{r box_customization, exercise=TRUE}
+ggplot(mtcars)+
+  geom_boxplot(aes(x=factor(cyl),y=mpg, fill=factor(cyl)), outlier.colour="red", outlier.shape=8, outlier.size=4)+
+  xlab("Num of Cylinders")+
+  ylab("Miles Per Gallon")+
+  geom_dotplot(aes(x=factor(cyl), y=mpg), binaxis='y', stackdir='center', dotsize=0.5)+
+  scale_fill_brewer(palette="Dark2")+
+  labs(fill="Cyl")
+```
+
+The `scale_fill_brewer` uses different color palettes from the *RColorBrewer* R package. Pre-made color palettes are a great way to select colors that work well together (e.g. differ!) without spending the time manually changing colors!
+
+### Exercise
+
+ggplot has *tons* of different types of plots! 
+
+__Run the below code for some fun ones!__  
+__What is the last line of code doing?__
+
+```{r violin, exercise=TRUE}
+ggplot(mtcars)+
+  geom_violin(aes(factor(cyl), mpg, fill=factor(cyl)), scale="width")+
+  xlab("Num of Cylinders")+
+  theme(legend.position="none")
+```
+
+
+```{r Facets, exercise=TRUE}
+ggplot(mtcars)+
+  geom_point(aes(x=wt,y=mpg,col=factor(cyl)))+
+  facet_grid(cyl~am)+
+  labs(col="Cyl")
+```
+
+The above is a scatterplot divided into panels by another (or multiple!) variable(s). The above is divided by both `cyl` and `am`.  
+Any idea how you would modify the above code to *only* divide by `am`?
+
+```{r Facets-hint}
+ggplot(mtcars)+
+  geom_point(aes(x=wt,y=mpg,col=factor(cyl)))+
+  facet_grid(~am)+
+  labs(col="Cyl")
+```
