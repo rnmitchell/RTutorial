@@ -3,4 +3,5 @@ install.packages(c("tidyr",
                    "learnr",
                    "ggplot2",
                    "magrittr",
-                   "UpSetR"))
+                   "UpSetR",
+                   "lubridate"))
