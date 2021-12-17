@@ -5,6 +5,7 @@ library(lubridate)
 library(ggplot2)
 library(UpSetR)
 library(magrittr)
+library(dplyr)
 
 # Setting up our colors code:
 # This will be relevant later in the exercise
